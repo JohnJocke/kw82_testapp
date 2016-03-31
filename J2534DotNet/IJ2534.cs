@@ -39,6 +39,7 @@ namespace J2534DotNet
         J2534Err Disconnect(int channelId);
         J2534Err ReadMsgs(int channelId, ref List<PassThruMsg> msgs, ref int numMsgs, int timeout);
         J2534Err WriteMsgs(int channelId, ref PassThruMsg msg, ref int numMsgs, int timeout);
+        J2534Err WriteMsgs(int channelId, List<PassThruMsg> msgs, ref int numMsgs, int timeout);
         J2534Err StartPeriodicMsg(int channelId, ref PassThruMsg msg, ref int msgId, int timeInterval);
         J2534Err StopPeriodicMsg(int channelId, int msgId);
         J2534Err StartMsgFilter
@@ -48,6 +49,15 @@ namespace J2534DotNet
             ref PassThruMsg maskMsg,
             ref PassThruMsg patternMsg,
             ref PassThruMsg flowControlMsg,
+            ref int filterId
+        );
+
+        J2534Err StartMsgFilter
+        (
+            int channelid,
+            FilterType filterType,
+            ref PassThruMsg maskMsg,
+            ref PassThruMsg patternMsg,
             ref int filterId
         );
         J2534Err StopMsgFilter(int channelId, int filterId);

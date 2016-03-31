@@ -104,6 +104,7 @@ namespace J2534DotNet
         ISO14230 = 10400,
         ISO14230_10400 = 10400,
         ISO14230_10000 = 10000,
+        ISO14230_38400 = 38400,
 
         J1850PWM = 41600,
         J1850PWM_41600 = 41600,
@@ -190,10 +191,54 @@ namespace J2534DotNet
         ERR_INVALID_DEVICE_ID = 0x1A
     }
 
+    public enum J2534Parameter
+    {
+        P1_MIN = 0x06, // Don't use
+        P1_MAX = 0x07,
+        P2_MIN = 0x08, // Don't use
+        P2_MAX = 0x09, // Don't use
+        P3_MIN = 0x0A,
+        P3_MAX = 0x0B, // Don't use
+        P4_MIN = 0x0C,
+        P4_MAX = 0x0D, // Don't use
+        W0 = 0x19,
+        W1 = 0x0E,
+        W2 = 0x0F,
+        W3 = 0x10,
+        W4 = 0x11,
+        W5 = 0x12,
+        FIVE_BAUD_MOD = 0x21
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct SConfig
     {
         public int Parameter;
         public int Value;
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class SConfig_List
+    {
+        public UInt32 NumOfParams;
+        public IntPtr configPtr;
+
+        public SConfig_List(SConfig[] config)
+        {
+            this.NumOfParams = (UInt32)config.Length;
+            int size = Marshal.SizeOf(config[0]);
+            IntPtr mem = this.configPtr = Marshal.AllocHGlobal(size * config.Length);
+            for (int ix = 0; ix < config.Length; ++ix)
+            {
+                Marshal.StructureToPtr(config[ix], mem, false);
+                mem = new IntPtr((long)mem + size);
+            }
+        }
+
+        ~SConfig_List()
+        {
+            Marshal.FreeHGlobal(this.configPtr);
+        }
+    }
+
 }

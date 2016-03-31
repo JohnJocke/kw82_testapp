@@ -28,80 +28,127 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.cmdDetectDevices = new System.Windows.Forms.Button();
-            this.txtDevices = new System.Windows.Forms.TextBox();
-            this.cmdReadVoltage = new System.Windows.Forms.Button();
-            this.txtVoltage = new System.Windows.Forms.TextBox();
-            this.cmdReadVin = new System.Windows.Forms.Button();
-            this.txtReadVin = new System.Windows.Forms.TextBox();
+            this.textBoxLog = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBoxJ2534 = new System.Windows.Forms.ComboBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.buttonReadInfo = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // cmdDetectDevices
+            // textBoxLog
             // 
-            this.cmdDetectDevices.Location = new System.Drawing.Point(13, 13);
-            this.cmdDetectDevices.Name = "cmdDetectDevices";
-            this.cmdDetectDevices.Size = new System.Drawing.Size(154, 23);
-            this.cmdDetectDevices.TabIndex = 0;
-            this.cmdDetectDevices.Text = "Detect J2534 Devices";
-            this.cmdDetectDevices.UseVisualStyleBackColor = true;
-            this.cmdDetectDevices.Click += new System.EventHandler(this.CmdDetectDevicesClick);
+            this.textBoxLog.Location = new System.Drawing.Point(260, 12);
+            this.textBoxLog.Multiline = true;
+            this.textBoxLog.Name = "textBoxLog";
+            this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBoxLog.Size = new System.Drawing.Size(662, 324);
+            this.textBoxLog.TabIndex = 1;
             // 
-            // txtDevices
+            // label2
             // 
-            this.txtDevices.Location = new System.Drawing.Point(173, 15);
-            this.txtDevices.Multiline = true;
-            this.txtDevices.Name = "txtDevices";
-            this.txtDevices.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtDevices.Size = new System.Drawing.Size(429, 160);
-            this.txtDevices.TabIndex = 1;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(29, 344);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "J2534:";
             // 
-            // cmdReadVoltage
+            // comboBoxJ2534
             // 
-            this.cmdReadVoltage.Location = new System.Drawing.Point(12, 188);
-            this.cmdReadVoltage.Name = "cmdReadVoltage";
-            this.cmdReadVoltage.Size = new System.Drawing.Size(155, 23);
-            this.cmdReadVoltage.TabIndex = 2;
-            this.cmdReadVoltage.Text = "Read Voltage";
-            this.cmdReadVoltage.UseVisualStyleBackColor = true;
-            this.cmdReadVoltage.Click += new System.EventHandler(this.CmdReadVoltageClick);
+            this.comboBoxJ2534.FormattingEnabled = true;
+            this.comboBoxJ2534.Location = new System.Drawing.Point(74, 341);
+            this.comboBoxJ2534.Name = "comboBoxJ2534";
+            this.comboBoxJ2534.Size = new System.Drawing.Size(133, 21);
+            this.comboBoxJ2534.TabIndex = 8;
             // 
-            // txtVoltage
+            // progressBar1
             // 
-            this.txtVoltage.Location = new System.Drawing.Point(173, 190);
-            this.txtVoltage.Name = "txtVoltage";
-            this.txtVoltage.Size = new System.Drawing.Size(429, 20);
-            this.txtVoltage.TabIndex = 3;
+            this.progressBar1.Location = new System.Drawing.Point(260, 342);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(662, 23);
+            this.progressBar1.TabIndex = 10;
             // 
-            // cmdReadVin
+            // buttonReadInfo
             // 
-            this.cmdReadVin.Location = new System.Drawing.Point(12, 217);
-            this.cmdReadVin.Name = "cmdReadVin";
-            this.cmdReadVin.Size = new System.Drawing.Size(155, 23);
-            this.cmdReadVin.TabIndex = 4;
-            this.cmdReadVin.Text = "Read VIN";
-            this.cmdReadVin.UseVisualStyleBackColor = true;
-            this.cmdReadVin.Click += new System.EventHandler(this.CmdReadVinClick);
+            this.buttonReadInfo.Location = new System.Drawing.Point(18, 12);
+            this.buttonReadInfo.Name = "buttonReadInfo";
+            this.buttonReadInfo.Size = new System.Drawing.Size(195, 37);
+            this.buttonReadInfo.TabIndex = 12;
+            this.buttonReadInfo.Text = "Connect";
+            this.buttonReadInfo.UseVisualStyleBackColor = true;
+            this.buttonReadInfo.Click += new System.EventHandler(this.buttonReadInfo_Click);
             // 
-            // txtReadVin
+            // textBox1
             // 
-            this.txtReadVin.Location = new System.Drawing.Point(174, 219);
-            this.txtReadVin.Name = "txtReadVin";
-            this.txtReadVin.Size = new System.Drawing.Size(428, 20);
-            this.txtReadVin.TabIndex = 5;
+            this.textBox1.Location = new System.Drawing.Point(18, 80);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(76, 20);
+            this.textBox1.TabIndex = 13;
+            this.textBox1.Text = "64";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(18, 163);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(195, 37);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "Read DTC";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(18, 119);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(195, 37);
+            this.button2.TabIndex = 15;
+            this.button2.Text = "Read Identifier";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 64);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 13);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "ECU address:";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(18, 207);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(195, 37);
+            this.button3.TabIndex = 17;
+            this.button3.Text = "Stop";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(614, 430);
-            this.Controls.Add(this.txtReadVin);
-            this.Controls.Add(this.cmdReadVin);
-            this.Controls.Add(this.txtVoltage);
-            this.Controls.Add(this.cmdReadVoltage);
-            this.Controls.Add(this.txtDevices);
-            this.Controls.Add(this.cmdDetectDevices);
+            this.ClientSize = new System.Drawing.Size(934, 425);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.buttonReadInfo);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.comboBoxJ2534);
+            this.Controls.Add(this.textBoxLog);
             this.Name = "Form1";
-            this.Text = "J2534DotNet Sample";
+            this.Text = "KW82";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -109,12 +156,16 @@
 
         #endregion
 
-        private System.Windows.Forms.Button cmdDetectDevices;
-        private System.Windows.Forms.TextBox txtDevices;
-        private System.Windows.Forms.Button cmdReadVoltage;
-        private System.Windows.Forms.TextBox txtVoltage;
-        private System.Windows.Forms.Button cmdReadVin;
-        private System.Windows.Forms.TextBox txtReadVin;
+        private System.Windows.Forms.TextBox textBoxLog;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboBoxJ2534;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button buttonReadInfo;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button3;
     }
 }
 

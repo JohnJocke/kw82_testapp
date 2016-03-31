@@ -75,9 +75,9 @@ namespace J2534DotNet
 
         public J2534Err ReadMsgs(int channelId, ref List<PassThruMsg> msgs, ref int numMsgs, int timeout)
         {
-            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*50);
+            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg))*1024);
             IntPtr pNextMsg = IntPtr.Zero;
-            IntPtr[] pMsgs = new IntPtr[50];
+            IntPtr[] pMsgs = new IntPtr[1024];
             J2534Err returnValue = (J2534Err)m_wrapper.ReadMsgs(channelId, pMsg, ref numMsgs, timeout);
             
             if (returnValue == J2534Err.STATUS_NOERROR)
@@ -85,7 +85,7 @@ namespace J2534DotNet
                 for (int i = 0; i < numMsgs; i++)
                 {
                     pNextMsg = (IntPtr)(Marshal.SizeOf(typeof(UnsafePassThruMsg))*i + (int)pMsg);
-                    UnsafePassThruMsg uMsg = (UnsafePassThruMsg)Marshal.PtrToStructure(pMsg, typeof(UnsafePassThruMsg));
+                    UnsafePassThruMsg uMsg = (UnsafePassThruMsg)Marshal.PtrToStructure(pNextMsg, typeof(UnsafePassThruMsg));
                     msgs.Add(ConvertPassThruMsg(uMsg));
                 }
             }
@@ -95,11 +95,38 @@ namespace J2534DotNet
             return returnValue;
         }
 
+        public J2534Err WriteMsgs(int channelId, List<PassThruMsg> msgs, ref int numMsgs, int timeout)
+        {
+            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)) * 1024);
+            IntPtr pNextMsg = IntPtr.Zero;
+            IntPtr[] pMsgs = new IntPtr[1024];
+
+            for (int i = 0; i < numMsgs; i++)
+            {
+                pNextMsg = (IntPtr)(Marshal.SizeOf(typeof(UnsafePassThruMsg)) * i + (int)pMsg);
+                Marshal.StructureToPtr(ConvertPassThruMsg(msgs[i]), pNextMsg, false);
+            }
+
+            J2534Err returnValue = (J2534Err)m_wrapper.WriteMsgs(channelId, pMsg, ref numMsgs, timeout);
+            //J2534Err returnValue = J2534Err.ERR_FAILED;
+
+            Marshal.FreeHGlobal(pMsg);
+
+            return returnValue;
+        }
+
         public J2534Err WriteMsgs(int channelId, ref PassThruMsg msg, ref int numMsgs, int timeout)
         {
-            UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
+            //UnsafePassThruMsg uMsg = ConvertPassThruMsg(msg);
+            IntPtr pMsg = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(UnsafePassThruMsg)));
+
+            Marshal.StructureToPtr(ConvertPassThruMsg(msg), pMsg, false);
             // TODO: change function to accept a list? of PassThruMsg
-            return (J2534Err)m_wrapper.WriteMsgs(channelId, ref uMsg, ref numMsgs, timeout);
+            J2534Err returnValue = (J2534Err)m_wrapper.WriteMsgs(channelId, pMsg, ref numMsgs, timeout);
+
+            Marshal.FreeHGlobal(pMsg);
+
+            return returnValue;
         }
 
         public J2534Err StartPeriodicMsg(int channelId, ref PassThruMsg msg, ref int msgId, int timeInterval)
@@ -214,10 +241,17 @@ namespace J2534DotNet
 
         public J2534Err SetConfig(int channelId, ref List<SConfig> config)
         {
-            IntPtr input = IntPtr.Zero;
-            IntPtr output = IntPtr.Zero;
+            SConfig_List list = new SConfig_List(config.ToArray());
 
-            return (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.SET_CONFIG, input, output);
+            IntPtr output = IntPtr.Zero;
+            IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(list));
+            Marshal.StructureToPtr(list, input, true);
+
+            J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.SET_CONFIG, input, output);
+
+            Marshal.FreeHGlobal(input);
+
+            return returnValue;
         }
 
         public J2534Err ReadBatteryVoltage(int deviceId, ref int voltage)
@@ -239,15 +273,22 @@ namespace J2534DotNet
         public J2534Err FiveBaudInit(int channelId, byte targetAddress, ref byte keyword1, ref byte keyword2)
         {
             J2534Err returnValue;
-            IntPtr input = IntPtr.Zero;
-            IntPtr output = IntPtr.Zero;
 
             SByteArray inputArray = new SByteArray();
             SByteArray outputArray = new SByteArray();
-            inputArray.NumOfBytes = 1;
+            
+
+            IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(inputArray));
+            IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(outputArray));
+
             unsafe
             {
-                //inputArray.BytePtr[0] = targetAddress;
+                inputArray.BytePtr = Marshal.AllocHGlobal(8);
+                byte[] targetAddressArray = new byte[] { targetAddress };
+                Marshal.Copy(targetAddressArray, 0, inputArray.BytePtr, 1);
+                inputArray.NumOfBytes = 1;
+
+                outputArray.BytePtr = Marshal.AllocHGlobal(8);
                 outputArray.NumOfBytes = 2;
 
                 Marshal.StructureToPtr(inputArray, input, true);
@@ -255,17 +296,19 @@ namespace J2534DotNet
 
                 returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.FIVE_BAUD_INIT, input, output);
 
-                Marshal.PtrToStructure(output, outputArray);
+                keyword1 = Marshal.ReadByte(outputArray.BytePtr, 0);
+                keyword2 = Marshal.ReadByte(outputArray.BytePtr, 1);
             }
             return returnValue;
         }
 
         public J2534Err FastInit(int channelId, PassThruMsg txMsg, ref PassThruMsg rxMsg)
         {
-            IntPtr input = IntPtr.Zero;
-            IntPtr output = IntPtr.Zero;
             UnsafePassThruMsg uTxMsg = ConvertPassThruMsg(txMsg);
             UnsafePassThruMsg uRxMsg = new UnsafePassThruMsg();
+
+            IntPtr input = Marshal.AllocHGlobal(Marshal.SizeOf(uTxMsg));
+            IntPtr output = Marshal.AllocHGlobal(Marshal.SizeOf(uRxMsg));
 
             Marshal.StructureToPtr(uTxMsg, input, true);
             Marshal.StructureToPtr(uRxMsg, output, true);
@@ -273,10 +316,13 @@ namespace J2534DotNet
             J2534Err returnValue = (J2534Err)m_wrapper.Ioctl(channelId, (int)Ioctl.FAST_INIT, input, output);
             if (returnValue == J2534Err.STATUS_NOERROR)
             {
-                Marshal.PtrToStructure(output, uRxMsg);
+                UnsafePassThruMsg uRx = (UnsafePassThruMsg)Marshal.PtrToStructure(output, typeof(UnsafePassThruMsg));
+                rxMsg = ConvertPassThruMsg(uRx);
             }
 
-            rxMsg = ConvertPassThruMsg(uRxMsg);
+            Marshal.FreeHGlobal(input);
+            Marshal.FreeHGlobal(output);
+
             return returnValue;
         }
 
@@ -382,7 +428,7 @@ namespace J2534DotNet
         private unsafe struct SByteArray
         {
             public int NumOfBytes;
-            public fixed byte BytePtr[2];
+            public IntPtr BytePtr;
         }
     }
 }
